@@ -46,7 +46,7 @@ Access http://localhost:8080/swagger/index.html
 - [x] Task order by created_at, status or other field in db. ASEC or DESC
 - [x] Task Search by name or description
 - [x] Task detail info
-- [ ] Real-time collection
+- [ ] Real-time collaboration
 
 ### Authentication (either by team or user)
 - [x] JWT token
