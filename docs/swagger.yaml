@@ -1,0 +1,752 @@
+definitions:
+  operation.CreateTaskOP:
+    properties:
+      description:
+        maxLength: 1000
+        type: string
+      due_date:
+        type: integer
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      status:
+        type: integer
+    required:
+    - name
+    type: object
+  operation.CreateTeamOP:
+    properties:
+      team_name:
+        example: sleekflow
+        maxLength: 15
+        minLength: 3
+        type: string
+    required:
+    - team_name
+    type: object
+  operation.SearchTaskOP:
+    properties:
+      info:
+        type: string
+    type: object
+  operation.UpdateTaskOP:
+    properties:
+      description:
+        maxLength: 1000
+        type: string
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      status:
+        type: integer
+    required:
+    - name
+    type: object
+  operation.UpdateTeamOP:
+    properties:
+      team_name:
+        example: sleekflow
+        maxLength: 15
+        minLength: 3
+        type: string
+      user:
+        example:
+        - 1
+        - 2
+        - 3
+        items:
+          type: integer
+        type: array
+    type: object
+  operation.UpdateUserOP:
+    properties:
+      password:
+        example: password
+        maxLength: 16
+        minLength: 5
+        type: string
+      user_name:
+        example: admin
+        maxLength: 15
+        minLength: 3
+        type: string
+    required:
+    - password
+    - user_name
+    type: object
+  operation.UserOP:
+    properties:
+      password:
+        example: password
+        maxLength: 16
+        minLength: 5
+        type: string
+      user_name:
+        example: admin
+        maxLength: 15
+        minLength: 3
+        type: string
+    required:
+    - password
+    - user_name
+    type: object
+  serializer.ResponseTask:
+    properties:
+      data:
+        $ref: '#/definitions/serializer.Task'
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  serializer.ResponseTeam:
+    properties:
+      data:
+        $ref: '#/definitions/serializer.Team'
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  serializer.ResponseTeamMembers:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/serializer.User'
+        type: array
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  serializer.ResponseUser:
+    properties:
+      data:
+        $ref: '#/definitions/serializer.User'
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  serializer.ResponseUserTeams:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/serializer.Team'
+        type: array
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  serializer.Task:
+    properties:
+      created_at:
+        type: integer
+      description:
+        example: sleep
+        type: string
+      due_date:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: eat
+        type: string
+      start_time:
+        type: integer
+      status:
+        example: 0
+        type: integer
+    type: object
+  serializer.Team:
+    properties:
+      create_at:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      team_name:
+        example: Sleekflow
+        type: string
+    type: object
+  serializer.User:
+    properties:
+      create_at:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      user_name:
+        example: admin
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/team/:team_id:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: team id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status":200,"data":{},"msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeam'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeam'
+      summary: Delete team
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: team id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status":200,"data":{},"msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeamMembers'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeamMembers'
+      summary: Show team members
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: team id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: team info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UpdateTeamOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status":200,"data":{},"msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeam'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeam'
+      summary: Update team info
+  /api/v1/team/search:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: search task info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.SearchTaskOP'
+      - description: team id
+        in: query
+        name: team_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Search for team tasks
+  /api/v1/team/task:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: task info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.CreateTaskOP'
+      - description: team id is required when task is a team task
+        in: query
+        name: team_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Create Team Task
+  /api/v1/team/task/:task_id:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: team id
+        in: query
+        name: team_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Delete team task
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: task info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UpdateTaskOP'
+      - description: team id
+        in: query
+        name: team_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Update team task
+  /api/v1/team/tasks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: created_at | id | due_date | status
+        in: query
+        name: Index
+        type: string
+      - description: asc | desc
+        in: query
+        name: order
+        type: string
+      - description: record limit
+        in: query
+        name: limit
+        type: integer
+      - description: start from
+        in: query
+        name: start
+        type: integer
+      - description: team id
+        in: query
+        name: team_id
+        required: true
+        type: integer
+      - description: status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Get Team task list
+  /api/v1/user:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+      summary: Update user info
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: username, password
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UpdateUserOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+      summary: Update user info
+  /api/v1/user/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user_name, password
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UserOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUser'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUser'
+      summary: User login
+  /api/v1/user/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: username, password
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UserOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"status":200,"data":{},"msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUser'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUser'
+      summary: User register
+  /api/v1/user/search:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: search task info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.SearchTaskOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Search for personal tasks
+  /api/v1/user/task:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: task info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.CreateTaskOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Create Personal Task
+  /api/v1/user/task/:task_id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: team id
+        in: query
+        name: team_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Show detailed information of team task
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: task info
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.UpdateTaskOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Update personal task
+  /api/v1/user/tasks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: create_at | id | due_date | status
+        in: query
+        name: Index
+        type: string
+      - description: asc | desc
+        in: query
+        name: order
+        type: string
+      - description: recode limit
+        in: query
+        name: limit
+        type: integer
+      - description: start from
+        in: query
+        name: start
+        type: integer
+      - description: status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Get Personal task list
+  /api/v1/user/team:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: team name
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/operation.CreateTeamOP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeam'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTeam'
+      summary: Create team
+  /api/v1/user/team/:team_id:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: team_id
+        in: path
+        name: team_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+      summary: Leave team
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: team_id
+        in: path
+        name: team_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+      summary: Join team
+  /api/v1/user/teams:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":true,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseUserTeams'
+      summary: Show user's teams
+  /user/task/:task_id:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: task id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"Status":200,"data":{},"Msg":"ok"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+        "500":
+          description: '{"status":500,"data":{},"Msg":{},"Error":"error"}'
+          schema:
+            $ref: '#/definitions/serializer.ResponseTask'
+      summary: Delete personal task
+swagger: "2.0"
