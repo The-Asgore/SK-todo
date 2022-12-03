@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	model.Database("./test1.db")
+	model.Database("./test.db")
 	r := router.NewRouter()
 	_ = r.Run(":8080")
 }
