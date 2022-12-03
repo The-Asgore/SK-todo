@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	model.Database("file::memory:?cache=shared")
+	model.Database("./test1.db")
 	r := router.NewRouter()
 	_ = r.Run(":8080")
 }
